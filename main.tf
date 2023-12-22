@@ -8,6 +8,7 @@ terraform {
     required_providers  {
         azurerm =   {
             source  =   "hashicorp/azurerm"
+            version = "~> 3.0.2"
         }
     }
 }
@@ -15,7 +16,6 @@ terraform {
 # Provider Block
 
 provider "azurerm" {
-    version         =   "~> 2.0"
     client_id       =   var.client_id
     client_secret   =   var.client_secret
     subscription_id =   var.subscription_id
@@ -24,16 +24,28 @@ provider "azurerm" {
     features {}
 }
 
-
-
-
-provider "azuread" {
-    version         =   ">= 0.11"
-    client_id       =   var.client_id
-    client_secret   =   var.client_secret
-    tenant_id       =   var.tenant_id
-    alias           =   "ad"
+resource "azurerm_resource_group" "rg" {
+  name     = var.resource_group_name
+  location = "westus2"
 }
+
+resource "azurerm_storage_account" "storage_account" {
+  name                = var.storage_account_name
+  resource_group_name = var.resource_group_name
+
+  location                 = var.location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+  account_kind             = "StorageV2"
+}
+
+# provider "azuread" {
+#     version         =   ">= 0.11"
+#     client_id       =   var.client_id
+#     client_secret   =   var.client_secret
+#     tenant_id       =   var.tenant_id
+#     alias           =   "ad"
+# }
 
 
 // module "windows-server" {
